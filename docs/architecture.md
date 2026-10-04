@@ -52,7 +52,12 @@ erDiagram
 | IReportService | Doanh thu, top bán chạy, lợi nhuận gộp |
 
 ## 5. Quyết định thiết kế
-- **SQL Server** làm cơ sở dữ liệu (EF Core Code First + Migrations). Chi tiết cài đặt trong `docs/database-setup.md`.
+- **SQL Server** làm cơ sở dữ liệu (EF Core Code First + Migrations). Chuỗi kết nối `DefaultConnection` được đặt trong `appsettings.json` (do LocalDB dùng Windows Auth không chứa mật khẩu). Chi tiết cài đặt trong `docs/database-setup.md`.
+- **Bảo mật & Phân quyền**:
+  - Dùng **Fallback Authorization Policy**: Mặc định mọi request đều bắt buộc đã đăng nhập (`RequireAuthenticatedUser()`), chỉ các action công khai mới gắn `[AllowAnonymous]` (`Login`, `AccessDenied`).
+  - Phục vụ file tĩnh: Cấu hình `UseStaticFiles()` trước `UseAuthorization()` và gọi `MapStaticAssets().AllowAnonymous()` để các tài nguyên tĩnh (`/lib`, `/css`, `/js`, `favicon`) được phục vụ không cần đăng nhập, tránh chuyển hướng 302 trên tài nguyên giao diện.
+  - Chống Brute-force: Bật `lockoutOnFailure: true` khi đăng nhập, khóa 5 phút sau 5 lần nhập sai.
+  - Phân quyền theo vai trò Identity Roles: `Admin` (quản trị toàn hệ thống) và `Cashier` (thu ngân).
 - **Chốt giá** (UnitPrice, UnitCost) vào SaleItem để báo cáo không đổi khi giá sản phẩm thay đổi.
 - **Xóa mềm** cho dữ liệu danh mục; hóa đơn không xóa.
 - **Transaction** bao quanh mọi thao tác thay đổi tồn kho.
@@ -60,6 +65,7 @@ erDiagram
 - Index: unique trên `Product.Barcode`; index trên `Sale.CreatedAt` để báo cáo theo ngày nhanh.
 
 ## 6. Seed dữ liệu
-- Vai trò: Admin, Cashier
-- Tài khoản Admin mặc định (đổi mật khẩu ngay sau lần đăng nhập đầu)
-- Vài danh mục và sản phẩm mẫu để thử nghiệm
+- Vai trò: `Admin`, `Cashier`.
+- Tài khoản mẫu (Admin & Cashier): Không hard-code mật khẩu trong source code. Đọc từ Configuration (`SeedAdmin` và `SeedCashier`) cấu hình qua **User Secrets**, và chỉ tự động seed khi ứng dụng chạy ở môi trường **Development**.
+- Vài danh mục và sản phẩm mẫu để thử nghiệm (sẽ thực hiện ở Module 2).
+

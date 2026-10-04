@@ -1,8 +1,99 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@inject UserManager<ApplicationUser> UserManager
+@{
+    ViewData["Title"] = "Trang chủ";
+    var currentUser = await UserManager.GetUserAsync(User);
+    var isAdmin = User.IsInRole("Admin");
+    var isCashier = User.IsInRole("Cashier");
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row">
+    <div class="col-12">
+        <div class="p-5 mb-4 bg-white rounded-3 shadow-sm border">
+            <div class="container-fluid py-2">
+                <h1 class="display-6 fw-bold text-dark">
+                    Xin chào, @(currentUser?.FullName ?? User.Identity?.Name)! 👋
+                </h1>
+                <p class="col-md-8 fs-5 text-muted">
+                    Chào mừng bạn đến với hệ thống quản lý siêu thị mini <strong>SieuThiMini</strong>.
+                </p>
+                <div class="d-flex align-items-center gap-2 mt-3">
+                    <span class="text-secondary">Vai trò hiện tại:</span>
+                    @if (isAdmin)
+                    {
+                        <span class="badge bg-danger fs-6 px-3 py-2">Quản trị viên (Admin)</span>
+                    }
+                    else if (isCashier)
+                    {
+                        <span class="badge bg-success fs-6 px-3 py-2">Thu ngân (Cashier)</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary fs-6 px-3 py-2">Chưa phân quyền</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h6 class="card-subtitle text-muted">Module 1</h6>
+                    <span class="badge bg-success">Đã hoàn thành</span>
+                </div>
+                <h5 class="card-title fw-bold">Nền tảng & Xác thực</h5>
+                <p class="card-text text-muted small">
+                    EF Core + SQL Server, Identity, Phân quyền Admin & Cashier, Seed tài khoản, Fallback Auth Policy.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h6 class="card-subtitle text-muted">Module 2</h6>
+                    <span class="badge bg-secondary">Tiếp theo</span>
+                </div>
+                <h5 class="card-title fw-bold">Danh mục & Sản phẩm</h5>
+                <p class="card-text text-muted small">
+                    Quản lý danh mục hàng hóa, quản lý sản phẩm, mã vạch, tồn kho và xóa mềm.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h6 class="card-subtitle text-muted">Module 3</h6>
+                    <span class="badge bg-light text-dark">Dự kiến</span>
+                </div>
+                <h5 class="card-title fw-bold">Nhà cung cấp & Nhập</h5>
+                <p class="card-text text-muted small">
+                    Quản lý nhà cung cấp, lập phiếu nhập hàng, tăng tồn kho theo transaction.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h6 class="card-subtitle text-muted">Module 4 & 5</h6>
+                    <span class="badge bg-light text-dark">Dự kiến</span>
+                </div>
+                <h5 class="card-title fw-bold">Bán hàng (POS) & Báo cáo</h5>
+                <p class="card-text text-muted small">
+                    Quầy thu ngân, in hóa đơn, trừ kho, báo cáo doanh thu và lợi nhuận.
+                </p>
+            </div>
+        </div>
+    </div>
 </div>

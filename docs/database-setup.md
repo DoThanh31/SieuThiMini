@@ -32,26 +32,38 @@ SQL Server Express (Windows Authentication):
   "DefaultConnection": "Server=localhost\\SQLEXPRESS;Database=SieuThiMini;Trusted_Connection=True;TrustServerCertificate=True"
 }
 ```
-Nếu dùng **SQL login** (user/mật khẩu), **không ghi mật khẩu vào appsettings.json**. Dùng User Secrets:
-```
+## 4. Cấu hình tài khoản mẫu qua User Secrets (Development)
+Không lưu thông tin đăng nhập tài khoản seed vào file mã nguồn. Chạy các lệnh sau trong terminal:
+```bash
+# Khởi tạo user secrets (nếu chưa khởi tạo)
 dotnet user-secrets init
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost\SQLEXPRESS;Database=SieuThiMini;User Id=...;Password=...;TrustServerCertificate=True"
+
+# Tài khoản Admin mẫu
+dotnet user-secrets set "SeedAdmin:Email" "admin@sieuthimini.vn"
+dotnet user-secrets set "SeedAdmin:Password" "Admin@123"
+dotnet user-secrets set "SeedAdmin:FullName" "Quản trị viên"
+
+# Tài khoản Thu ngân (Cashier) mẫu
+dotnet user-secrets set "SeedCashier:Email" "cashier@sieuthimini.vn"
+dotnet user-secrets set "SeedCashier:Password" "Cashier@123"
+dotnet user-secrets set "SeedCashier:FullName" "Thu ngân 01"
 ```
 
-## 4. Đăng ký trong `Program.cs`
+## 5. Đăng ký trong `Program.cs`
 ```csharp
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 ```
 
-## 5. Tạo database bằng migration
-```
-dotnet ef migrations add InitialCreate
+## 6. Tạo database bằng migration
+```bash
+dotnet ef migrations add InitialIdentity
 dotnet ef database update
 ```
+
 Mỗi lần sửa entity: tạo migration mới có tên rõ nghĩa rồi `dotnet ef database update`.
 
-## 6. Sự cố thường gặp
+## 7. Sự cố thường gặp
 - **Không kết nối được**: kiểm tra dịch vụ SQL Server đang chạy (Services > SQL Server) và tên instance đúng.
 - **Lỗi chứng chỉ SSL**: thêm `TrustServerCertificate=True` vào chuỗi kết nối (chỉ cho môi trường phát triển).
 - **`dotnet ef` không nhận lệnh**: cài lại công cụ `dotnet-ef` hoặc mở terminal mới.
